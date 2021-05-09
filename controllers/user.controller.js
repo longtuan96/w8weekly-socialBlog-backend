@@ -24,7 +24,7 @@ userController.createUser = async (req, res, next) => {
 
 userController.getUser = async (req, res, next) => {
   try {
-    const allUsers = await User.find();
+    const allUsers = await User.find({});
     res.status(200).json({
       success: true,
 

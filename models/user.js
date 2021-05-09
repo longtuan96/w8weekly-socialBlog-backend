@@ -25,18 +25,25 @@ const userSchema = new mongoose.Schema(
     },
     avatarUrl: { type: String },
     friendCount: { type: Number },
+    friendShip: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "FriendShip",
+    },
+    reviews: { type: mongoose.Schema.Types.ObjectId, ref: "Review" },
+    blogs: { type: mongoose.Schema.Types.ObjectId, ref: "Blog" },
+    reactions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Reaction" }],
   },
   {
     timestamps: true,
   }
 );
 
-// userSchema.methods.toJSON = function () {
-//   const obj = this._doc;
-
-//   delete obj.__v;
-//   return obj;
-// };
+userSchema.methods.toJSON = function () {
+  const obj = this._doc;
+  delete obj.password;
+  delete obj.__v;
+  return obj;
+};
 
 userSchema.methods.generateToken = function () {
   const user = this;

@@ -1,15 +1,7 @@
 const mongoose = require("mongoose");
 const User = require("./user");
-const blogSchema = mongoose.Schema(
+const reviewSchema = mongoose.Schema(
   {
-    title: {
-      type: String,
-
-      required: [true, "title is required"],
-
-      trim: true,
-    },
-
     content: {
       type: String,
 
@@ -18,33 +10,36 @@ const blogSchema = mongoose.Schema(
       trim: true,
     },
 
-    author: {
+    user: {
       type: mongoose.Schema.Types.ObjectId,
 
       ref: "User",
     },
-    images: { type: Array },
+    blog: {
+      type: mongoose.Schema.Types.ObjectId,
+
+      ref: "Blog",
+    },
+
     reactions: {
       type: Object,
       default: { laugh: 0, sad: 0, like: 0, love: 0, angry: 0 },
     },
-
-    reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: "Review" }],
   },
   {
     timestamps: true,
   }
 );
 
-blogSchema.pre("save", async function (next) {
+reviewSchema.pre("save", async function (next) {
   // check the user is exist in system
-  const checkUser = await User.findById(this.author);
+  const checkUser = await User.findById(this.user);
   if (checkUser) {
     next();
   } else {
     throw new Error("that user is not exist");
   }
 });
-const Blog = mongoose.model("Blog", blogSchema);
+const Review = mongoose.model("Review", reviewSchema);
 
-module.exports = Blog;
+module.exports = Review;
