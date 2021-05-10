@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema(
       required: [true, "User must have a password"],
     },
     avatarUrl: { type: String },
-    friendCount: { type: Number },
+    friendCount: { type: Number, default: 0 },
     friendShip: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "FriendShip",
@@ -42,6 +42,7 @@ userSchema.methods.toJSON = function () {
   const obj = this._doc;
   delete obj.password;
   delete obj.__v;
+
   return obj;
 };
 

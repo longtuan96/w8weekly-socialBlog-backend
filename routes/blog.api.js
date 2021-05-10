@@ -12,9 +12,9 @@ router.use("/reviews", reviewApi);
 router.post("/", loginRequired, blogController.createBlog);
 /**
  * @GET
- * get user information
+ * get current user's blog
  */
-
+router.get("/own", loginRequired, blogController.getMyBlogs);
 /**
  * @GET
  * get all blogs

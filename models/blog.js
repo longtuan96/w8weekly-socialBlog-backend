@@ -9,7 +9,7 @@ const blogSchema = mongoose.Schema(
 
       trim: true,
     },
-
+    reviewCount: { type: Number, default: 0 },
     content: {
       type: String,
 

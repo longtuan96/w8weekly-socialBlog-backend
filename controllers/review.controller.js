@@ -24,7 +24,10 @@ reviewController.createReview = async (req, res, next) => {
 
     reviewArray.push(newReview._id);
 
-    await Blog.findByIdAndUpdate(blog_id, { reviews: reviewArray });
+    await Blog.findByIdAndUpdate(blog_id, {
+      reviews: reviewArray,
+      reviewCount: reviewArray.length,
+    });
     res.status(200).json({
       status: "success",
       data: newReview,
@@ -62,7 +65,7 @@ reviewController.getReviews = async (req, res, next) => {
 
     res.status(200).json({
       status: "success",
-      data: reviews,
+      data: { reviews },
       page,
       totalPage,
       message: `reviews are listed!`,
@@ -103,24 +106,29 @@ reviewController.deleteReview = async (req, res) => {
     const blog = await Blog.findById(review.blog);
 
     let reviewsArray = blog.reviews;
-    let index = reviewsArray.indexOf(review_id);
-    if (index != -1) {
-      reviewsArray.splice(index, 1);
-    }
 
     if (req.userId == review.user) {
+      let index = reviewsArray.indexOf(review_id);
+      if (index != -1) {
+        reviewsArray.splice(index, 1);
+      }
       await Blog.findByIdAndUpdate(
         review.blog,
-        { reviews: reviewsArray },
+        { reviews: reviewsArray, reviewCount: reviewsArray.length },
         { new: true }
       );
       await Review.findByIdAndDelete(review_id);
-    }
-    res.status(200).json({
-      status: "success",
+      res.status(200).json({
+        status: "success",
 
-      message: `review is deleted!`,
-    });
+        message: `review is deleted!`,
+      });
+    } else {
+      res.status(400).json({
+        status: "fail",
+        error: "you are not the author",
+      });
+    }
   } catch (error) {
     res.status(400).json({
       status: "fail",
@@ -128,6 +136,7 @@ reviewController.deleteReview = async (req, res) => {
     });
   }
 };
+
 reviewController.updateReview = async (req, res) => {
   try {
     const { review_id } = req.params;
@@ -142,6 +151,11 @@ reviewController.updateReview = async (req, res) => {
         status: "success",
 
         message: `review is updated!`,
+      });
+    } else {
+      res.status(400).json({
+        status: "fail",
+        error: "you are not the author",
       });
     }
   } catch (error) {

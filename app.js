@@ -13,9 +13,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-
+const cors = require("cors");
 app.use("/api", indexRouter);
-
+app.use(cors());
 mongoose
   .connect(process.env.DB_API, {
     useCreateIndex: true,

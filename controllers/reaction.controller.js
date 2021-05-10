@@ -11,13 +11,12 @@ reactionController.chooseReaction = async (req, res, next) => {
     let target = "";
 
     //if there no same reaction from this user
-    console.log(targetId);
+
     const currentReaction = await Reaction.findOne({
       author: req.userId,
       targetId,
     });
     if (!currentReaction) {
-      console.log("if run");
       const reaction = await new Reaction({
         author: req.userId,
         targetType,

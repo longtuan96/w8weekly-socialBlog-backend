@@ -1,16 +1,18 @@
 const { parse } = require("dotenv");
+const e = require("express");
 const Blog = require("../models/blog");
 const Reaction = require("../models/reaction");
 
 const blogController = {};
 blogController.createBlog = async (req, res, next) => {
   try {
-    const { title, content } = req.body;
+    const { title, content, images } = req.body;
     //create new reaction document for this blog
-
+    const imagesArray = [...images];
     const newBlog = new Blog({
       title,
       content,
+      images: imagesArray,
       author: req.userId,
     });
 
@@ -38,26 +40,24 @@ blogController.getBlogs = async (req, res, next) => {
     //get totale number of blogs
     const totalBlogs = await Blog.countDocuments({
       ...filter,
-      isDelete: false,
     });
     //get total pages
     const totalPage = Math.ceil(totalBlogs / limit);
     //get number of data we have to skip
     const offset = limit * (page - 1);
     //get blogs base on query
-    const blog = await Blog.find(filter)
+    const blogs = await Blog.find(filter)
       .skip(offset)
       .limit(limit)
-      .populate("user")
-      .populate("owner");
-
-    const blogs = await Blog.find({}).populate("owner");
+      .populate("author");
+    // const blogs = await Blog.find({}).populate("author");
 
     res.status(200).json({
       status: "success",
       data: blogs,
       page,
       totalPage,
+      totalBlogs,
       message: `blogs are listed!`,
     });
   } catch (error) {
@@ -70,7 +70,7 @@ blogController.getBlogs = async (req, res, next) => {
 
 blogController.getMyBlogs = async (req, res) => {
   try {
-    const blogs = await Blog.find({ owner: req.userId }).populate("author");
+    const blogs = await Blog.find({ author: req.userId }).populate("author");
 
     res.status(200).json({
       success: true,
@@ -87,18 +87,19 @@ blogController.getMyBlogs = async (req, res) => {
     });
   }
 };
+
 blogController.getSingleBlog = async (req, res) => {
   try {
-    const blog = await Blog.find({ _id: req.params.blog_id }).populate(
-      "author"
-    );
+    const blog = await Blog.find({ _id: req.params.blog_id })
+      .populate("author")
+      .populate("reviews");
 
     res.status(200).json({
       success: true,
 
       data: blog,
 
-      message: `${blogs.length} blogs found!`,
+      message: ` blog ${req.params.blog_id} found!`,
     });
   } catch (err) {
     res.status(400).json({
@@ -114,15 +115,20 @@ blogController.deleteBlog = async (req, res) => {
 
     if (req.userId == blog.author) {
       await Blog.findByIdAndDelete(blog._id);
+      res.status(200).json({
+        success: true,
+
+        data: blog,
+
+        message: `blog deleted `,
+      });
+    } else {
+      res.status(400).json({
+        success: "fail",
+
+        message: `you are not the author`,
+      });
     }
-
-    res.status(200).json({
-      success: true,
-
-      data: blog,
-
-      message: `blog deleted `,
-    });
   } catch (err) {
     res.status(400).json({
       success: false,
@@ -134,24 +140,30 @@ blogController.deleteBlog = async (req, res) => {
 blogController.updateBlog = async (req, res) => {
   try {
     const { title, content, images } = req.body;
+    const imagesArray = [...images];
     const oldBlog = await Blog.findById(req.params.blog_id);
     const blog = await Blog.findById(req.params.blog_id);
     const editTitle = title || oldBlog.title;
     const editContent = content || oldBlog.content;
-    const editImages = images || oldBlog.images;
+    const editImages = imagesArray || oldBlog.images;
     if (req.userId == blog.author) {
       await Blog.findByIdAndUpdate(
         req.params.blog_id,
         { title: editTitle, content: editContent, images: editImages },
         { new: true }
       );
+      res.status(200).json({
+        success: true,
+
+        message: `${blog._id} is updated `,
+      });
+    } else {
+      es.status(400).json({
+        success: "fail",
+
+        message: `you are not the author `,
+      });
     }
-
-    res.status(200).json({
-      success: true,
-
-      message: `${blog._id} is updated `,
-    });
   } catch (err) {
     res.status(400).json({
       success: false,

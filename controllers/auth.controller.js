@@ -23,8 +23,8 @@ authController.loginWithEmail = async (req, res, next) => {
   console.log(accessToken);
   res.status(200).json({
     success: true,
-
-    token: accessToken,
+    data: { user },
+    accessToken,
     message: `Logged in successfully!`,
   });
 };
