@@ -15,7 +15,15 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/api", indexRouter);
-app.use(cors());
+app.use(
+  cors({
+    allowedHeaders: ["sessionId", "Content-Type"],
+    exposedHeaders: ["sessionId"],
+    origin: `*`,
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    preflightContinue: true,
+  })
+);
 
 // app.use(function (req, res, next) {
 //   // Website you wish to allow to connect
