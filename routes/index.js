@@ -9,7 +9,7 @@ const friendshipApi = require("./friendship.api");
 router.use("/users", userApi);
 router.use("/blogs", blogApi);
 router.use("/reaction", reactionApi);
-router.use("/login", authApi);
+router.use("/auth", authApi);
 router.use("/reviews", reviewApi);
 router.use("/friends", friendshipApi);
 module.exports = router;
