@@ -59,17 +59,24 @@ userSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(this.password, saltRounds);
   next();
 });
-// userSchema.statics.findOrCreate = function findOrCreate(profile, cb) {
-//   const userObj = new this();
-//   this.findOne({ email: profile.email }, async function (err, result) {
-//     if (!result) {
-//       const newPassword = "" + Math.floor(Math.random() * 100000000);
-//       const salt =await bcrypt.genSalt(10)
-//     } else {
-//       cb(err, result);
-//     }
-//   });
-// };
+userSchema.statics.findOrCreate = function findOrCreate(profile, cb) {
+  const userObj = new this();
+  this.findOne({ email: profile.email }, async function (err, result) {
+    if (!result) {
+      let newPassword = "" + Math.floor(Math.random() * 100000000);
+      const salt = await bcrypt.genSalt(10);
+      newPassword = await bcrypt.hash(newPassword, salt);
+
+      userOnj.name = profile.name;
+      userObj.mail = profile.mail;
+      (userObj.password = newPassword), (userObj.avatarUrl = profile.avatarurl);
+
+      await userObj.save(cb);
+    } else {
+      cb(err, result);
+    }
+  });
+};
 
 const User = mongoose.model("User", userSchema);
 

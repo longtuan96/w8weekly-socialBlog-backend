@@ -1,8 +1,8 @@
-const passport = require("passport");
 const FacebookTokenStrategy = require("passport-facebook-token");
+const passport = require("passport");
 const User = require("../models/user");
 const FACEBOOK_APP_ID = process.env.FACEBOOK_APP_ID;
-const FACEBOOK_APP_SECRET_KEY = process.env.FACEBOOK_APP_SECRET_KEY;
+const FACEBOOK_APP_SECRET_KEY = process.env.FACEBOOK_APP_ID;
 
 passport.serializeUser(function (user, done) {
   done(null, user);
@@ -14,8 +14,8 @@ passport.deserializeUser(function (id, done) {
 passport.use(
   new FacebookTokenStrategy(
     {
-      clientID: FACEBOOK_APP_ID,
-      clientSecret: FACEBOOK_APP_SECRET_KEY,
+      clientID: 432241858217550,
+      clientSecret: "2f136a047ae4584fcd676513a56d4109",
       fbGraphVersion: "v3.0",
     },
     function (accessToken, refreshToken, profile, done) {
@@ -33,3 +33,4 @@ passport.use(
     }
   )
 );
+module.exports = passport;

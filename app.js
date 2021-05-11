@@ -7,6 +7,8 @@ const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/user.api");
 const cors = require("cors");
 const app = express();
+const passport = require("passport");
+require("./helpers/passport");
 require("dotenv").config();
 app.use(cors());
 app.use(logger("dev"));
@@ -14,7 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-
+app.use(passport.initialize());
 app.use("/api", indexRouter);
 
 // app.use(function (req, res, next) {

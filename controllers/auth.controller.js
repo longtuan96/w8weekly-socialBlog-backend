@@ -18,14 +18,22 @@ authController.loginWithEmail = async (req, res, next) => {
 
       error: "Wrong email or password",
     });
+};
+authController.loginWithFacebookOrGoogle = async (req, res, next) => {
+  try {
+    const { user } = req;
 
-  const accessToken = await user.generateToken();
-  console.log(accessToken);
-  res.status(200).json({
-    success: true,
-    data: { user },
-    accessToken,
-    message: `Logged in successfully!`,
-  });
+    if (user) {
+      user = await User.findByIdAndUpdate(
+        user._id,
+        { avatarUrl: user.avatarUrl }, //get recent avatar from facebook
+        { new: true }
+      );
+    } else {
+      throw new Error("login failed!");
+    }
+    const accessToken = await user.generateToken();
+    res.status(200).json({ status: "success", data: user, accessToken });
+  } catch (error) {}
 };
 module.exports = authController;
