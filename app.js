@@ -8,12 +8,13 @@ const usersRouter = require("./routes/user.api");
 const cors = require("cors");
 const app = express();
 require("dotenv").config();
+app.use(cors());
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-app.use(cors());
+
 app.use("/api", indexRouter);
 
 // app.use(function (req, res, next) {

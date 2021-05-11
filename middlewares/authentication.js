@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const loginRequired = (req, res, next) => {
+const loginRequired = async (req, res, next) => {
   try {
     const tokenString = req.headers.authorization;
     if (!tokenString)
