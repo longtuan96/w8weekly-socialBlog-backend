@@ -50,6 +50,7 @@ mongoose
   })
   .then(() => {
     console.log(`MongoDB database connection established successfully!`);
+    console.log("env values", process.env.DB_API, "and Port", process.env.PORT);
   })
   .catch((err) => console.error("Could not connect to database!", err));
 
